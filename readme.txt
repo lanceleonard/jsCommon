@@ -1,6 +1,8 @@
 Intro:
 ------
 
+IMPORTANT: This is a partial work in progress.  I need to consolidate different versions into a "canonical" release.  I intended to create tests, demos, and the like.  I don't consider the current version ready for use and am mainly using this as a way to become familiar with git as a versioning tool.  Over time, I do expect this to be useful.  Please be patient.
+
 jsCommon is a set of utility functions commonly seen in my samples and apps.  Originally created to support my work on various samples and utilities for the Internet Explorer Developer Documentation team (2005-2014), this library has become part framework, part test case for my attempts to write standards-based, cross-browser code.  (You probably won't see this in production code, though you might see it referenced in various articles.)
 
 I do not claim these functions are idiomatic; however, they do appear to work well given the constraints.  All well-intentioned feedback is welcome; all other feedback will be cheerfully ignored.
