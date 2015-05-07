@@ -2,20 +2,36 @@
  * change log
  *
  * 21 Oct 14: 
- * Using this library as a way to learn the basics of git as a VSS.  Also hoping to 
- * consolidate different versions of this library into a (relatively) cohesive whole.  
+ * Work started as a way to learn the basics of git as a VSS.  
+ * Also hoping to consolidate different versions of this 
+ * library into a relatively cohesive whole.  
  *
  * 19 Dec 2014:
- * Updating comments to set expectations.  This is still very much a work in progress.
- * One hampered, I'm afraid, by data loss through backup failure.  Ten years of data gone.
- * If a hard drive fails in the cluster, was the data ever truly backed up?  #heartbroken
+ * Updating comments to set expectations.  This is still very 
+ * much a work in progress.  One hampered, I'm afraid, by data 
+ * loss through backup failure.  Ten years of personal and 
+ * professional data *poof*.  If a hard drive fails in the 
+ * archive, was there really a backup?  #heartbroken
  *
  * 16 Feb 2015:
  * New life on the project, sorta.  
  * -- Added jsdoc-style comments. 
- * -- Bulked up file name functions to include options for trailing path separator.
- * -- Updated TODOs throughout existing functions to reflect latest thinking.
- * -- Other fixes and tweaks. 
+ * -- Updated filename functions to handle trailing separators.
+ * -- Updated TODOs throughout to reflect latest thinking.
+ * -- Other fixes and tweaks.
+ *
+ * Feb - Apr 2015:
+ * -- Assorted fixes and minor changes.
+ * -- Started reworking default handlers.  Wish to simplify setup
+      new projects.  Looking into RequireJS or AMD pattern.
+ * -- Updated setTextHandler to optionally keep previous text.
+ *
+ * ?? ??? 15
+ * -- Typo fixes
+ * -- Reorganized functions categories for clarity and eventual
+ *    separation.
+ * -- Started work on a test harness.  Hope to evolve it into a
+ *    test-driven development demo.  Ongoing concern.
  *
  */
 

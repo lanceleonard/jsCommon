@@ -4,50 +4,23 @@
  *
  * TODO:: 
  * 0.  Consolidate disparate versions of the library into one canoncial version to, ahem, rule them all.  Get to v1.0 release.
- * 1.  Convert inline documentation to jsdoc style and add tools for genetating the docs.
- * 2.  Review the use of IDs and objects as parameters.  Consider unifying use into a single process or openly supported both techniques.  Use whatever choice consistently.
+ * 1.  Convert inline documentation to jsdoc style and add tools for generating the docs.
+ * 2.  Review the use of IDs and objects as parameters.  Consider unifying use into a single process or openly support both techniques.  Use final choice consistently.
  * 3.  When doc generation is working, incororporate the resulting docs into the git wiki.
  * 4.  Rework to register default handlers for error checking, results reporting and similar activities.
  * 5.  Add functions that allow shortcuts for common tasks, e.g. addLine();
- * 6.  Add functionality to register common panel names by default, as well as the 
- * ability to change the names as needed by individual apps.
+ * 6.  Add functionality to register common panel names by default, as well as the ability to change the names as needed by individual apps.
+ * 7.  Update getElementObject to return an obj or an array, as appropriate.
  */
 
-  // Constants
-  var kPathSeparator = "/";
+//
+// Definitions: 
+// - "Panel" refers to an HTML element that can display text, e.g. DIV, that supports a textContent property or the innerText method (for older browsers)
 
-  function clearPanelText( sTargetPanel ) {
-  /**
-   * Clears the text content of a panel.  An intermediary function, this is generally called by other functions.
-   * @param {string} panel ID - The ID assigned to the panel, assumed to be unique to the given page.
-   */
 
-    // TODO:: Strengthen error checking here.
-    var o = getElementObject( sTargetPanel );
-    if ( o == null ) {
-       handleError( "Can't find " + sTargetPanel + ". Check your code.");
-    } else {
-      setTextContent( o, "" );
-    }  
-  }
-  
 
-  function clearResults() { 
-  /**
-   * Clears the text content of the results panel.  Companion function to updateResults().
-   */
-
-    // TODO:: Rework to register pResults by default and add functions to allow the 
-    // resgistration of other pnael objects, perhaps even a push/pop mechanism.
-    clearPanelText( "pResults" );
-  }
-
-  function clearStatus() { 
-  /**
-   * Clears the text content of the status panel.  Companion function to updateStatus().
-   */
-    clearPanelText( "pStatus" );
-  }
+// -----
+// CORE FUNCTIONS: These are primarily used in samples
 
   function extractFilePath( sFullFilename, bIncludeTrailing ) {
   /**
@@ -64,7 +37,7 @@
       if ( aTokens.length > 0 ) {
          aTokens.pop();
          sResult = aTokens.join( kPathSeparator ) + kPathSeparator;
-	  }
+    }
    }
    return sResult;
 }
@@ -105,24 +78,6 @@
     return sResult;
   }
 
-  function handleError( sErrorMsg ) {
-  /**
-   * Handles an error message using the currently registerd process,
-   * @param {string} error message - The message to be handled
-   */
-   
-    // TODO: 
-    // 1.  Rework to use the console as the default handler.
-    // 2.  Rework to default to the output panel, rather than the results panel.
-    var s = "Development Error: " + sErrorMsg;
-    var w = window;
-    if ( w.console ) {
-      w.console.warn( s );
-    } else {
-      updateResults( s );
-    }
-  }
-
   function reduceFilename( sFullFilename ) {
   /**
    * Returns the filename associated with a fully qualified filename.  
@@ -136,7 +91,7 @@
       var aTokens = sFullFilename.split( kPathSeparator );
       if ( aTokens.length > 0 ) {
          sResult = aTokens[ aTokens.length - 1 ];
-	  }
+    }
    }
    return sResult;
   }
@@ -151,21 +106,21 @@
 
   // TODO: 
   // 1) Rework to search for the attribute before using attachEvent.  OnEventName is standard-based; attachEvent is not. 
-  // 2) Add filter to exclude the DOMxxx events.  Not every event has an "on" version that needs fallback.
+  // 2) Add code to test the presence of "on" attributes for fallback and skip if not supported.  
   // 3) Currently, there's no fall back when the object cannot be found; need to provide something for that case, even if it's only a basic error handler.
       
   {
      var oTarget = null;
      // See if the target is a supported built-in object.
 
-	  if ( sTargetID == "document" ) {
-	    oTarget = document; 
-	  } else if ( sTargetID == "window" ) {
-	    oTarget = window;
-	  } else {
+    if ( sTargetID == "document" ) {
+      oTarget = document; 
+    } else if ( sTargetID == "window" ) {
+      oTarget = window;
+    } else {
        oTarget = document.getElementById( sTargetID );
     }
-	 
+   
     if ( oTarget != null ) 
     {
       if ( oTarget.addEventListener ) {   
@@ -181,22 +136,121 @@
     }
   }
   
-  function setTextContent( oTarget, sNewText ) {
+  function setTextContent( oTarget, sNewText, bAppendParam ) {
   /**
-   * Set the text inside an element object, with error-checking.
+   * Set the text inside an element object, with fallback.
    * @param {object} The object to update.
    * @param {string} Content to be put into the object.
+   * @param {boolean} Flag indicating if existing text should be kept; default == false.
    */
    
+   var bAppendFlag = ( bAppendParam == true ) ? true : false;
+
    if ( oTarget == null ) {
       var sError = "setTextContent could not set text; object not assigned.";
       handleError( sError );
     } else {
       var sTextProp = ( 'textContent' in oTarget ) ? 
                        "textContent" : "innerText";
-      oTarget[ sTextProp ] = sNewText;
+
+//      TODO: Error detection to verify that the target attribure exists
+//      if ( oTarget.hasAttribute( ) ...
+
+      if ( bAppendFlag = false ) { oTarget = ""; }
+      oTarget[ sTextProp ] += sNewText;
     }
   }
+
+// -----
+// HOUSEKEEPING FUNCTIONS
+
+  // Constants
+  var kPathSeparator  = "/";
+  var kStatusPanelID  = "pStatus";   // Status panel is where progress and status messages appear.
+  var kResultPanelID  = "pResults";  // Result panel is where process messages and output appears.
+  var kErrorHandler   = "console";   // In this use, error handler refers either to "console" or the ID of a panel (DIV)
+  var kCurrentVersion = "0.9.1";     // Current version; call version() to return.
+
+  function clearPanelText( sTargetPanel ) {
+  /**
+   * Clears the text content of a panel.  An intermediary function, this is generally called by other functions.
+   * @param {string} panel ID - The ID assigned to the panel, assumed to be unique to the given page.
+   */
+
+    var o = getElementObject( sTargetPanel );
+    if ( o == null ) {
+       handleError( "Can't find " + sTargetPanel + ". Check your code.");
+    } else {
+      setTextContent( o, "" );
+    }  
+  }
+  
+
+  function clearResults() { 
+  /**
+   * Clears the text content of the results panel.  Companion function to updateResults().
+   */
+
+    clearPanelText( kResultPanelID );
+  }
+
+  function clearStatus() { 
+  /**
+   * Clears the text content of the status panel.  Companion function to updateStatus().
+   */
+    clearPanelText( kStatusPanelID );
+  }
+
+  function handleError( sErrorMsg ) {
+  /**
+   * Handles an error message using the currently registered process,
+   * @param {string} error message - The message to be handled
+   */
+   
+    // TODO: 
+    // 1.  Rework to use the console as the default handler.
+    // 2.  Rework to default to the output panel, rather than the results panel.
+    var s = "Development Error: " + sErrorMsg;
+    var sHandlerError = "" // Flag: Blank when no errors; explanation otherwise.
+    if ( kErrorHandler != 'console') {
+
+      // assume the registered error handler value is a string containing the 
+      // name of a DOM object that supports text content.
+
+      var obj = getElementObject( kErrorHandler );
+      if (obj == null ) {
+        sHandlerError = "Unable to get element named '" + kErrorHandler + "'.";
+      } else { 
+        setTextContent
+      }
+
+
+    } else { // assume it refers to a 
+
+    }
+
+    var w = window;
+    if ( w.console ) {
+      w.console.warn( s );
+    } else {
+      updateResults( s );
+    }
+  }
+
+function registerErrorTarget( sTargetID ) {
+/**
+ * Indicates where error message are displayed.  Should be the ID of a DOM object or "console".
+ */
+  kErrorHandler  = sTargetID;
+}
+
+function registerResultTarget( sTargetID ) {
+/**
+ * Indicates where result messages are displayed.  Should be the ID of a DOM object or "console".
+ */
+  kResultPanelID = sTargetID;
+}
+
 
   function updatePanelText( sTargetPanel, sMessage )
   /**
@@ -257,6 +311,14 @@
     }
     
     updatePanelText( sStatusPanelName, sMessage );
+  }
+
+  function version
+  /**
+   * Returns the current version as a string.
+   */
+  {
+    return kCurrentVersion;
   }
 
   function sny() 
